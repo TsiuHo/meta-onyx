@@ -1,0 +1,52 @@
+[
+    {
+        "Name": "HOST_HIGH_TEMP_N",
+        "LineName": "HOST_HIGH_TEMP_N",
+        "EventMon": "BOTH",
+        "Targets": {
+            "FALLING": ["assert-cpu-overtemp-log.service"],
+            "RISING": ["deassert-cpu-overtemp-log.service"]
+        },
+        "Continue": true
+    },
+    {
+        "Name": "POWER_BUTTON",
+        "LineName": "POWER_BUTTON",
+        "EventMon": "BOTH",
+        "Targets": {
+            "FALLING": ["obmc-power-button-pressed.service"],
+            "RISING": ["obmc-power-button-released.service"]
+        },
+        "Continue": true
+    },
+    {
+        "Name": "RESET_BUTTON",
+        "LineName": "RESET_BUTTON",
+        "EventMon": "BOTH",
+        "Targets": {
+            "FALLING": ["obmc-reset-button-pressed.service"],
+            "RISING": ["obmc-reset-button-released.service"]
+        },
+        "Continue": true
+    },
+    {
+        "Name": "POWER_OK",
+        "LineName": "POWER_OK",
+        "EventMon": "BOTH",
+        "Targets": {
+            "RISING": ["assert-power-ok.service"],
+            "FALLING": ["deassert-power-ok.service"]
+        },
+        "Continue": true
+    },
+    {
+        "Name": "CHASSIS_INTRUSION",
+        "LineName": "CHASSIS_INTRUSION",
+        "EventMon": "BOTH",
+        "Targets": {
+            "RISING": ["assert-chassis-intrusion.service"],
+            "FALLING": ["deassert-chassis-intrusion.service"]
+        },
+        "Continue": true
+    }
+]

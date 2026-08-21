@@ -1,0 +1,121 @@
+From: OpenBMC User <user@example.com>
+Date: Mon, 3 Aug 2026 10:00:00 +08:00
+Subject: [PATCH] Add ONYX OEM Redfish endpoint
+
+Upstream-Status: Inappropriate [OEM specific]
+
+This patch adds a custom Redfish OEM endpoint at /redfish/v1/Oem/Onyx/Info
+which queries the com.onyx.OemInfo D-Bus service.
+
+---
+ redfish-core/lib/oem_onyx_info.hpp | 79 ++++++++++++++++++++++++++++++
+ redfish-core/src/redfish.cpp       |  3 ++
+ 2 files changed, 82 insertions(+)
+ create mode 100644 redfish-core/lib/oem_onyx_info.hpp
+
+diff --git a/redfish-core/lib/oem_onyx_info.hpp b/redfish-core/lib/oem_onyx_info.hpp
+new file mode 100644
+index 00000000..819a6b10
+--- /dev/null
++++ b/redfish-core/lib/oem_onyx_info.hpp
+@@ -0,0 +1,79 @@
++#pragma once
++
++#include "app.hpp"
++#include "async_resp.hpp"
++#include "query.hpp"
++#include "registries/privilege_registry.hpp"
++#include "utils/dbus_utils.hpp"
++
++#include <sdbusplus/asio/property.hpp>
++
++#include <memory>
++#include <string>
++
++namespace redfish
++{
++
++inline void requestRoutesOnyxOemInfo(App& app)
++{
++    BMCWEB_ROUTE(app, "/redfish/v1/Oem/Onyx/Info/")
++        .privileges(redfish::privileges::getManager)
++        .methods(boost::beast::http::verb::get)(
++            [&app](const crow::Request& req,
++                   const std::shared_ptr<bmcweb::AsyncResp>& asyncResp) {
++                if (!redfish::setUpRedfishRoute(app, req, asyncResp))
++                {
++                    return;
++                }
++
++                asyncResp->res.jsonValue["@odata.type"] =
++                    "#OnyxOemInfo.v1_0_0.OnyxOemInfo";
++                asyncResp->res.jsonValue["@odata.id"] =
++                    "/redfish/v1/Oem/Onyx/Info";
++                asyncResp->res.jsonValue["Id"] = "OnyxOemInfo";
++                asyncResp->res.jsonValue["Name"] = "ONYX OEM Information";
++
++                // Query D-Bus for the properties
++                sdbusplus::asio::getAllProperties(
++                    *crow::connections::systemBus, "com.onyx.OemInfo",
++                    "/com/onyx/oem_info", "com.onyx.OemInfo",
++                    [asyncResp](const boost::system::error_code& ec,
++                                const dbus::utility::DBusPropertiesMap& propertiesList) {
++                        if (ec)
++                        {
++                            BMCWEB_LOG_ERROR("D-Bus response error: {}", ec.value());
++                            messages::internalError(asyncResp->res);
++                            return;
++                        }
++
++                        const std::string* version = nullptr;
++                        const std::string* boardName = nullptr;
++                        const std::string* biosVersion = nullptr;
++                        const std::string* status = nullptr;
++
++                        const bool success = sdbusplus::unpackPropertiesNoThrow(
++                            dbus_utils::UnpackErrorPrinter(), propertiesList,
++                            "Version", version,
++                            "BoardName", boardName,
++                            "BiosVersion", biosVersion,
++                            "Status", status);
++
++                        if (!success)
++                        {
++                            messages::internalError(asyncResp->res);
++                            return;
++                        }
++
++                        if (version != nullptr)
++                            asyncResp->res.jsonValue["Version"] = *version;
++                        if (boardName != nullptr)
++                            asyncResp->res.jsonValue["BoardName"] = *boardName;
++                        if (biosVersion != nullptr)
++                            asyncResp->res.jsonValue["BiosVersion"] = *biosVersion;
++                        if (status != nullptr)
++                            asyncResp->res.jsonValue["Status"] = *status;
++                    });
++            });
++}
++
++} // namespace redfish
+diff --git a/redfish-core/src/redfish.cpp b/redfish-core/src/redfish.cpp
+index 2855fb21..5df8de13 100644
+--- a/redfish-core/src/redfish.cpp
++++ b/redfish-core/src/redfish.cpp
+@@ -35,6 +35,7 @@
+ #include "network_adapter.hpp"
+ #include "network_protocol.hpp"
+ #include "odata.hpp"
++#include "oem_onyx_info.hpp"
+ #include "openbmc/openbmc_managers.hpp"
+ #include "pcie.hpp"
+ #include "power.hpp"
+@@ -249,6 +250,8 @@ RedfishService::RedfishService(App& app)
+     requestRoutesTriggerCollection(app);
+     requestRoutesTrigger(app);
+ 
++    requestRoutesOnyxOemInfo(app);
++
+     // Note, this must be the last route registered
+     requestRoutesRedfish(app);
+ 
