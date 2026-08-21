@@ -1,0 +1,11 @@
+[Unit]
+Description=ONYX Hardware Root of Trust Manager
+After=dbus.service
+
+[Service]
+Restart=always
+ExecStart=/usr/bin/onyx-rot-manager
+Type=simple
+
+[Install]
+WantedBy=multi-user.target
