@@ -1,0 +1,11 @@
+[Unit]
+Description=ONYX NC-SI Network Management Service
+After=dbus.service
+
+[Service]
+Restart=always
+ExecStart=/usr/bin/onyx-ncsi-manager
+Type=simple
+
+[Install]
+WantedBy=multi-user.target
