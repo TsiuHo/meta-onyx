@@ -1,0 +1,11 @@
+[Unit]
+Description=ONYX Power Sequencing & Hardware Watchdog Manager
+After=dbus.service
+
+[Service]
+Restart=always
+ExecStart=/usr/bin/onyx-power-wdt
+Type=simple
+
+[Install]
+WantedBy=multi-user.target
