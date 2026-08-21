@@ -10,4 +10,4 @@ SYSTEMD_SERVICE:${PN} = "xyz.openbmc_project.VirtualMedia.Onyx.service"
 
 SRC_URI = "file://meson.build            file://LICENSE            file://service/xyz.openbmc_project.VirtualMedia.Onyx.service            file://src/onyx-vmedia-manager.cpp"
 
-S = "${WORKDIR}"
+S = "${UNPACKDIR}"

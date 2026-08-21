@@ -10,4 +10,4 @@ SYSTEMD_SERVICE:${PN} = "xyz.openbmc_project.State.Chassis.Onyx.service"
 
 SRC_URI = "file://meson.build            file://LICENSE            file://service/xyz.openbmc_project.State.Chassis.Onyx.service            file://src/onyx-power-wdt.cpp"
 
-S = "${WORKDIR}"
+S = "${UNPACKDIR}"

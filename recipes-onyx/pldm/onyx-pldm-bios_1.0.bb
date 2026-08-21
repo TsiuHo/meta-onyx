@@ -10,4 +10,4 @@ RDEPENDS:${PN} = "pldm"
 
 SRC_URI = "file://meson.build            file://LICENSE            file://src/onyx-pldm-bios.cpp"
 
-S = "${WORKDIR}"
+S = "${UNPACKDIR}"

@@ -1,0 +1,11 @@
+[Unit]
+Description=ONYX PCIe VDM High-Speed MCTP Manager
+After=dbus.service
+
+[Service]
+Restart=always
+ExecStart=/usr/bin/onyx-pcie-mctp
+Type=simple
+
+[Install]
+WantedBy=multi-user.target

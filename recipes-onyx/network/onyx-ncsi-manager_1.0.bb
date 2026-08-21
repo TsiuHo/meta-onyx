@@ -10,4 +10,4 @@ SYSTEMD_SERVICE:${PN} = "xyz.openbmc_project.Network.NCSI.Onyx.service"
 
 SRC_URI = "file://meson.build            file://LICENSE            file://service/xyz.openbmc_project.Network.NCSI.Onyx.service            file://src/onyx-ncsi-manager.cpp"
 
-S = "${WORKDIR}"
+S = "${UNPACKDIR}"

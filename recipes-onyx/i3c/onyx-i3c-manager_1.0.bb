@@ -10,4 +10,4 @@ SYSTEMD_SERVICE:${PN} = "xyz.openbmc_project.I3C.Onyx.service"
 
 SRC_URI = "file://meson.build            file://LICENSE            file://service/xyz.openbmc_project.I3C.Onyx.service            file://src/onyx-i3c-manager.cpp"
 
-S = "${WORKDIR}"
+S = "${UNPACKDIR}"

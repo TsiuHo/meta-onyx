@@ -10,4 +10,4 @@ SYSTEMD_SERVICE:${PN} = "com.onyx.PostcodeSnoop.service"
 
 SRC_URI = "file://meson.build            file://LICENSE            file://service/com.onyx.PostcodeSnoop.service            file://src/onyx-postcode-snoop.cpp"
 
-S = "${WORKDIR}"
+S = "${UNPACKDIR}"

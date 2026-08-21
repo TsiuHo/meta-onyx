@@ -10,4 +10,4 @@ SYSTEMD_SERVICE:${PN} = "xyz.openbmc_project.OnyxVoltageMonitor.service"
 
 SRC_URI = "file://meson.build            file://LICENSE            file://service/xyz.openbmc_project.OnyxVoltageMonitor.service            file://src/onyx-voltage-monitor.cpp"
 
-S = "${WORKDIR}"
+S = "${UNPACKDIR}"

@@ -10,4 +10,4 @@ SYSTEMD_SERVICE:${PN} = "xyz.openbmc_project.Control.Security.RoT.service"
 
 SRC_URI = "file://meson.build            file://LICENSE            file://service/xyz.openbmc_project.Control.Security.RoT.service            file://src/onyx-rot-manager.cpp"
 
-S = "${WORKDIR}"
+S = "${UNPACKDIR}"
