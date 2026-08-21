@@ -1,0 +1,229 @@
+From Hao Chou <haochou@example.com>
+Date: Thu, 20 Aug 2026 13:18:07 +0800
+Subject: [PATCH] Add ONYX Fan Control OEM Redfish
+
+Upstream-Status: Inappropriate [OEM specific]
+
+Adds /redfish/v1/Oem/Onyx/FanControl and /redfish/v1/Oem/Onyx/Actions/FanControl.RunTest
+---
+ redfish-core/lib/oem_onyx_fan_control.hpp | 188 ++++++++++++++++++++++
+ redfish-core/src/redfish.cpp               |   2 +
+ 2 files changed, 190 insertions(+)
+ create mode 100644 redfish-core/lib/oem_onyx_fan_control.hpp
+
+diff --git a/redfish-core/lib/oem_onyx_fan_control.hpp b/redfish-core/lib/oem_onyx_fan_control.hpp
+new file mode 100644
+index 00000000..8a4e8d2e
+--- /dev/null
++++ b/redfish-core/lib/oem_onyx_fan_control.hpp
+@@ -0,0 +1,188 @@
++#pragma once
++
++#include "app.hpp"
++#include "async_resp.hpp"
++#include "dbus_utility.hpp"
++#include "query.hpp"
++#include "registries/privilege_registry.hpp"
++#include "utils/dbus_utils.hpp"
++#include "utils/json_utils.hpp"
++
++#include <sdbusplus/asio/property.hpp>
++
++#include <memory>
++#include <optional>
++#include <string>
++#include <tuple>
++#include <variant>
++
++namespace redfish
++{
++
++inline void requestRoutesOnyxFanControl(App& app)
++{
++    BMCWEB_ROUTE(app, "/redfish/v1/Oem/Onyx/FanControl/")
++        .privileges(redfish::privileges::getManager)
++        .methods(boost::beast::http::verb::get)(
++            [&app](const crow::Request& req,
++                   const std::shared_ptr<bmcweb::AsyncResp>& asyncResp) {
++                if (!redfish::setUpRedfishRoute(app, req, asyncResp))
++                {
++                    return;
++                }
++
++                asyncResp->res.jsonValue["@odata.id"] =
++                    "/redfish/v1/Oem/Onyx/FanControl";
++                asyncResp->res.jsonValue["@odata.type"] =
++                    "#OnyxFanControl.v1_0_0.OnyxFanControl";
++                asyncResp->res.jsonValue["Id"] = "FanControl";
++                asyncResp->res.jsonValue["Name"] = "Onyx OEM Fan Control";
++
++                sdbusplus::asio::getAllProperties(
++                    *crow::connections::systemBus, "com.onyx.FanControl",
++                    "/com/onyx/fan_control", "com.onyx.FanControl",
++                    [asyncResp](const boost::system::error_code ec,
++                                const dbus::utility::DBusPropertiesMap& propertiesList) {
++                        if (ec)
++                        {
++                            messages::internalError(asyncResp->res);
++                            return;
++                        }
++
++                        for (const auto& property : propertiesList)
++                        {
++                            if (property.first == "FanMode")
++                            {
++                                const std::string* value =
++                                    std::get_if<std::string>(&property.second);
++                                if (value != nullptr)
++                                {
++                                    asyncResp->res.jsonValue["FanMode"] = *value;
++                                }
++                            }
++                            else if (property.first == "TargetPWM")
++                            {
++                                const uint8_t* value =
++                                    std::get_if<uint8_t>(&property.second);
++                                if (value != nullptr)
++                                {
++                                    asyncResp->res.jsonValue["TargetPWM"] = *value;
++                                }
++                            }
++                            else if (property.first == "Fan0Speed" ||
++                                     property.first == "Fan1Speed")
++                            {
++                                const uint16_t* value =
++                                    std::get_if<uint16_t>(&property.second);
++                                if (value != nullptr)
++                                {
++                                    asyncResp->res.jsonValue[property.first] = *value;
++                                }
++                            }
++                            else if (property.first == "InletTemp" ||
++                                     property.first == "PidKp" ||
++                                     property.first == "PidKi" ||
++                                     property.first == "PidKd")
++                            {
++                                const double* value =
++                                    std::get_if<double>(&property.second);
++                                if (value != nullptr)
++                                {
++                                    asyncResp->res.jsonValue[property.first] = *value;
++                                }
++                            }
++                        }
++                    });
++            });
++
++    BMCWEB_ROUTE(app, "/redfish/v1/Oem/Onyx/FanControl/")
++        .privileges(redfish::privileges::patchManager)
++        .methods(boost::beast::http::verb::patch)(
++            [&app](const crow::Request& req,
++                   const std::shared_ptr<bmcweb::AsyncResp>& asyncResp) {
++                if (!redfish::setUpRedfishRoute(app, req, asyncResp))
++                {
++                    return;
++                }
++
++                std::optional<std::string> fanMode;
++                std::optional<uint8_t> targetPWM;
++
++                if (!json_util::readJsonPatch(req, asyncResp->res,
++                                              "FanMode", fanMode,
++                                              "TargetPWM", targetPWM))
++                {
++                    return;
++                }
++
++                if (fanMode)
++                {
++                    crow::connections::systemBus->async_method_call(
++                        [asyncResp](const boost::system::error_code ec) {
++                            if (ec)
++                            {
++                                messages::internalError(asyncResp->res);
++                                return;
++                            }
++                        },
++                        "com.onyx.FanControl", "/com/onyx/fan_control",
++                        "org.freedesktop.DBus.Properties", "Set",
++                        "com.onyx.FanControl", "FanMode",
++                        std::variant<std::string>(*fanMode));
++                }
++
++                if (targetPWM)
++                {
++                    crow::connections::systemBus->async_method_call(
++                        [asyncResp](const boost::system::error_code ec) {
++                            if (ec)
++                            {
++                                messages::internalError(asyncResp->res);
++                                return;
++                            }
++                        },
++                        "com.onyx.FanControl", "/com/onyx/fan_control",
++                        "org.freedesktop.DBus.Properties", "Set",
++                        "com.onyx.FanControl", "TargetPWM",
++                        std::variant<uint8_t>(*targetPWM));
++                }
++
++                messages::success(asyncResp->res);
++            });
++
++    BMCWEB_ROUTE(app, "/redfish/v1/Oem/Onyx/Actions/FanControl.RunTest/")
++        .privileges(redfish::privileges::postManager)
++        .methods(boost::beast::http::verb::post)(
++            [&app](const crow::Request& req,
++                   const std::shared_ptr<bmcweb::AsyncResp>& asyncResp) {
++                if (!redfish::setUpRedfishRoute(app, req, asyncResp))
++                {
++                    return;
++                }
++
++                std::optional<uint8_t> duration;
++                if (!json_util::readJsonAction(req, asyncResp->res,
++                                               "DurationSeconds", duration))
++                {
++                    return;
++                }
++
++                uint8_t durationVal = duration ? *duration : 10;
++
++                crow::connections::systemBus->async_method_call(
++                    [asyncResp](const boost::system::error_code ec,
++                                const std::tuple<bool, std::string>& result) {
++                        if (ec)
++                        {
++                            messages::internalError(asyncResp->res);
++                            return;
++                        }
++                        asyncResp->res.jsonValue["Success"] = std::get<0>(result);
++                        asyncResp->res.jsonValue["Message"] = std::get<1>(result);
++                    },
++                    "com.onyx.FanControl", "/com/onyx/fan_control",
++                    "com.onyx.FanControl", "RunFanTest", durationVal);
++            });
++}
++
++} // namespace redfish
+diff --git a/redfish-core/src/redfish.cpp b/redfish-core/src/redfish.cpp
+index 5df8de13..87654321 100644
+--- a/redfish-core/src/redfish.cpp
++++ b/redfish-core/src/redfish.cpp
+@@ -36,6 +36,7 @@
+ #include "network_protocol.hpp"
+ #include "odata.hpp"
+ #include "oem_onyx_info.hpp"
++#include "oem_onyx_fan_control.hpp"
+ #include "openbmc/openbmc_managers.hpp"
+ #include "pcie.hpp"
+ #include "power.hpp"
+@@ -252,6 +253,7 @@ RedfishService::RedfishService(App& app)
+     requestRoutesTrigger(app);
+ 
+     requestRoutesOnyxOemInfo(app);
++    requestRoutesOnyxFanControl(app);
+ 
+     // Note, this must be the last route registered
+     requestRoutesRedfish(app);
+-- 
+2.34.1

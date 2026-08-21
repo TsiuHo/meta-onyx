@@ -1,0 +1,42 @@
+[
+  {
+    "Desc": {
+      "Name": "Chassis_Exhaust_Temp",
+      "SensorType": "temperature"
+    },
+    "Params": {
+      "DbusParam": [
+        {"ParamName": "inlet", "Desc": {"Name": "Inlet_Temp", "SensorType": "temperature"}},
+        {"ParamName": "cpu", "Desc": {"Name": "CPU0_Temp", "SensorType": "temperature"}}
+      ]
+    },
+    "Expression": "(inlet + cpu) / 2 + 5"
+  },
+  {
+    "Desc": {
+      "Name": "Total_Power",
+      "SensorType": "power"
+    },
+    "Params": {
+      "DbusParam": [
+        {"ParamName": "cpuP", "Desc": {"Name": "CPU0_Power", "SensorType": "power"}},
+        {"ParamName": "memP", "Desc": {"Name": "Memory_Power", "SensorType": "power"}},
+        {"ParamName": "fanP", "Desc": {"Name": "Fan_Power", "SensorType": "power"}}
+      ]
+    },
+    "Expression": "cpuP + memP + fanP"
+  },
+  {
+    "Desc": {
+      "Name": "Cooling_Efficiency",
+      "SensorType": "utilization"
+    },
+    "Params": {
+      "DbusParam": [
+        {"ParamName": "inlet", "Desc": {"Name": "Inlet_Temp", "SensorType": "temperature"}},
+        {"ParamName": "outlet", "Desc": {"Name": "Outlet_Temp", "SensorType": "temperature"}}
+      ]
+    },
+    "Expression": "max(0, (outlet - inlet) / outlet * 100)"
+  }
+]

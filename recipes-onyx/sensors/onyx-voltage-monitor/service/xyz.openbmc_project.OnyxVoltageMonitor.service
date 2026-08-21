@@ -1,0 +1,11 @@
+[Unit]
+Description=ONYX Voltage Telemetry Service
+After=dbus.service
+
+[Service]
+Restart=always
+ExecStart=/usr/bin/onyx-voltage-monitor
+Type=simple
+
+[Install]
+WantedBy=multi-user.target

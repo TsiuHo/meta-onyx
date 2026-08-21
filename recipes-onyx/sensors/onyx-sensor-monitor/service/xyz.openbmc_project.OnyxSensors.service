@@ -1,0 +1,11 @@
+[Unit]
+Description=ONYX Hardware Sensor Telemetry Service
+After=dbus.service
+
+[Service]
+Restart=always
+ExecStart=/usr/bin/onyx-sensor-monitor
+Type=simple
+
+[Install]
+WantedBy=multi-user.target

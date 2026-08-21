@@ -1,0 +1,11 @@
+[Unit]
+Description=ONYX Hardware Fan Controller
+After=dbus.service
+
+[Service]
+Restart=always
+ExecStart=/usr/bin/onyx-fan-control
+Type=simple
+
+[Install]
+WantedBy=multi-user.target
