@@ -1,0 +1,47 @@
+{
+  "Exposes": [
+    {
+      "Name": "Lab_Inlet_Temp",
+      "Type": "TMP75",
+      "Bus": 3,
+      "Address": "0x48",
+      "Thresholds": [
+        {
+          "Direction": "greater than",
+          "Name": "upper critical",
+          "Severity": 1,
+          "Value": 70
+        },
+        {
+          "Direction": "greater than",
+          "Name": "upper non critical",
+          "Severity": 0,
+          "Value": 60
+        }
+      ]
+    },
+    {
+      "Name": "Lab_Exhaust_Temp",
+      "Type": "TMP421",
+      "Bus": 3,
+      "Address": "0x4C",
+      "Thresholds": [
+        {
+          "Direction": "greater than",
+          "Name": "upper critical",
+          "Severity": 1,
+          "Value": 85
+        },
+        {
+          "Direction": "greater than",
+          "Name": "upper non critical",
+          "Severity": 0,
+          "Value": 75
+        }
+      ]
+    }
+  ],
+  "Name": "ONYX Lab Baseboard",
+  "Probe": "TRUE",
+  "Type": "Board"
+}

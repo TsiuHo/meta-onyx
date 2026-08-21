@@ -1,0 +1,70 @@
+/*
+ * Lab 1-2: GPIO-controlled LED in Device Tree
+ *
+ * BMC architecture learning suitable for BIOS engineers:
+ * The DC-SCM standard defines many necessary signals and LED indicators, such as BMC Heartbeat,
+ * System fault indication (Fault) and identification light (Identify).
+ * In a Linux system, we do not write loops to toggle GPIO registers,
+ *  `gpio-leds`  LED。
+ *
+ * ASPEED AST2600 GPIO Bank mapping (8 pins per bank):
+ * Bank A: GPIO00-07 (offset 0-7)
+ * Bank B: GPIO08-15 (offset 8-15)
+ * Bank C: GPIO16-23 (offset 16-23)
+ * And so on...
+ */
+
+/dts-v1/;
+/plugin/;
+
+#include <dt-bindings/gpio/gpio.h>
+#include <dt-bindings/leds/common.h>
+
+/ {
+	/*
+	 * The gpio-leds node is used to declare all LEDs controlled by GPIO
+	 */
+	leds {
+		compatible = "gpio-leds";
+
+		/* 
+		 * BMC Heartbeat LED
+		 * Expected to be connected to GPIOA5 (offset 5)
+		 */
+		bmc_heartbeat {
+			label = "bmc-heartbeat";
+			/*
+			 * gpios = <&gpio0 [offset] [flags]>;
+			 * GPIO_ACTIVE_LOW indicates the LED is on when pulled low (sink)
+			 */
+			gpios = <&gpio0 5 GPIO_ACTIVE_LOW>;
+			/*
+			 * default-trigger sets the default LED behavior.
+			 * "heartbeat" is a built-in trigger of the Linux kernel,
+			 * It will blink automatically, the frequency is related to system load, often used as a system survival indicator.
+			 */
+			linux,default-trigger = "heartbeat";
+		};
+
+		/* 
+		 * System Fault LED
+		 * Expected to be connected to GPIOB3 (offset 8 + 3 = 11)
+		 */
+		system_fault {
+			label = "system-fault";
+			gpios = <&gpio0 11 GPIO_ACTIVE_LOW>;
+			/* Off by default at system startup, turned on by BMC software based on hardware status */
+			default-state = "off";
+		};
+
+		/* 
+		 * Identification LED (Identify/UID)
+		 * Expected to be connected to GPIOB4 (offset 8 + 4 = 12)
+		 */
+		identify {
+			label = "identify";
+			gpios = <&gpio0 12 GPIO_ACTIVE_LOW>;
+			default-state = "off";
+		};
+	};
+};

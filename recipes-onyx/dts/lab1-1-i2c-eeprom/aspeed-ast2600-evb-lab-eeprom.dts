@@ -1,0 +1,58 @@
+/*
+ * Lab 1-1: I2C EEPROM in Device Tree
+ * 
+ * BMC architecture learning suitable for BIOS engineers:
+ * In the DC-SCM (Datacenter Secure Control Module) architecture, the HPM (Host Processor Module) 
+ * And the SCM (Secure Control Module, the module where the BMC is located) are separated.
+ * For the BMC to know which HPM is currently connected, an I2C EEPROM is usually placed on the HPM to store
+ * FRU (Field Replaceable Unit) information.
+ * 
+ * In Linux/OpenBMC, we describe the hardware architecture through the Device Tree,
+ * Tells the Linux kernel which driver to load, and its physical location (such as I2C bus and address).
+ */
+
+/dts-v1/;
+/plugin/;
+
+/*
+ * The I2C controller of AST2600 supports multiple I2C buses, this example mounts on I2C bus 7.
+ * In the ASPEED architecture, it is usually represented as the &i2c7 node.
+ */
+&i2c7 {
+	status = "okay";
+
+	/* 
+	 * AT24C256 EEPROM device node
+	 * @0x50 is the I2C slave address
+	 */
+	eeprom@50 {
+		/*
+		 * The compatible string is very important, the Linux kernel will use this string to match the corresponding driver (at24.c).
+		 */
+		compatible = "atmel,24c256";
+		
+		/*
+		 * reg defines the I2C address (0x50).
+		 * BIOS engineer note: A 7-bit address is usually used here, no need to consider the Read/Write bit.
+		 */
+		reg = <0x50>;
+		
+		/*
+		 * EEPROM page size (bytes), at24c256 has 64 bytes per page.
+		 * Used for driver optimized write operations.
+		 */
+		pagesize = <64>;
+		
+		/*
+		 * Total EEPROM capacity size (bytes).
+		 * 256K bits = 32K Bytes = 32768 Bytes。
+		 */
+		size = <32768>;
+		
+		/*
+		 * Label name, can be used for identification in sysfs.
+		 * Indicates this is the FRU information EEPROM for the HPM board.
+		 */
+		label = "hpm-fru-eeprom";
+	};
+};

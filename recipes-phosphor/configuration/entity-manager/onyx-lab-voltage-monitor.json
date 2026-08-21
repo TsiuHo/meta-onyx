@@ -1,0 +1,20 @@
+[
+    {
+        "Exposes": [
+            {
+                "Name": "P3V3_STBY",
+                "Type": "VoltageSensor",
+                "Thresholds": [
+                    {
+                        "Direction": "greater than",
+                        "Name": "upper critical",
+                        "Severity": 1,
+                        "Value": 3.63
+                    }
+                ]
+            }
+        ],
+        "Name": "Onyx Lab Baseboard",
+        "Type": "Board"
+    }
+]

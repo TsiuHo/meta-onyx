@@ -1,0 +1,35 @@
+/*
+ * Lab 1-3: hwmon Temperature Sensor in Device Tree
+ *
+ * BMC architecture learning suitable for BIOS engineers:
+ * The BMC needs to monitor various hardware statuses, including temperature. In Linux, hardware monitoring sensors
+ * Handled by the hwmon (Hardware Monitoring) subsystem.
+ * We define the sensor models and addresses in the Device Tree, and Linux will automatically load the corresponding drivers,
+ * And creates a standardized interface under /sys/class/hwmon/ (like temp1_input).
+ */
+
+/dts-v1/;
+/plugin/;
+
+&i2c3 {
+	status = "okay";
+
+	/* 
+	 * The first temperature sensor TMP75
+	 * @0x48 is the I2C slave address
+	 */
+	tmp75@48 {
+		/* TI TMP75 compatible driver (lm75 compatible) */
+		compatible = "ti,tmp75";
+		reg = <0x48>;
+	};
+
+	/* 
+	 * The second temperature sensor TMP421
+	 * Used as a control experiment
+	 */
+	tmp421@4c {
+		compatible = "ti,tmp421";
+		reg = <0x4c>;
+	};
+};
