@@ -1,0 +1,11 @@
+[Unit]
+Description=ONYX PLDM Firmware Device Service
+After=pldmd.service
+
+[Service]
+Restart=always
+ExecStart=/usr/bin/onyx-pldm-fwup
+Type=simple
+
+[Install]
+WantedBy=multi-user.target

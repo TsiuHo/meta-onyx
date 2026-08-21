@@ -1,0 +1,62 @@
+{
+  "entries": [
+    {
+      "attribute_name": "str_BootOrder",
+      "attribute_type": "BIOSString",
+      "string_type": "ASCII",
+      "minimum_string_length": 0,
+      "maximum_string_length": 100,
+      "default_string_length": 11,
+      "default_string": "HDD,PXE,USB"
+    },
+    {
+      "attribute_name": "enum_SecureBoot",
+      "attribute_type": "BIOSEnumeration",
+      "possible_values": ["Enabled", "Disabled"],
+      "default_values": ["Enabled"]
+    },
+    {
+      "attribute_name": "int_MemTrainingTimeout",
+      "attribute_type": "BIOSInteger",
+      "lower_bound": 30,
+      "upper_bound": 600,
+      "scalar_increment": 10,
+      "default_value": 120
+    },
+    {
+      "attribute_name": "enum_SRIOV",
+      "attribute_type": "BIOSEnumeration",
+      "possible_values": ["Enabled", "Disabled"],
+      "default_values": ["Disabled"]
+    },
+    {
+      "attribute_name": "enum_HyperThreading",
+      "attribute_type": "BIOSEnumeration",
+      "possible_values": ["Enabled", "Disabled"],
+      "default_values": ["Enabled"]
+    },
+    {
+      "attribute_name": "int_PXERetryCount",
+      "attribute_type": "BIOSInteger",
+      "lower_bound": 0,
+      "upper_bound": 10,
+      "scalar_increment": 1,
+      "default_value": 3
+    },
+    {
+      "attribute_name": "enum_TPMState",
+      "attribute_type": "BIOSEnumeration",
+      "possible_values": ["Enabled", "Disabled", "Cleared"],
+      "default_values": ["Enabled"]
+    },
+    {
+      "attribute_name": "str_AssetTag",
+      "attribute_type": "BIOSString",
+      "string_type": "ASCII",
+      "minimum_string_length": 0,
+      "maximum_string_length": 32,
+      "default_string_length": 0,
+      "default_string": ""
+    }
+  ]
+}
