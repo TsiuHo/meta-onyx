@@ -1,0 +1,11 @@
+[Unit]
+Description=ONYX eSPI/LPC Snoop POST Code Monitor
+After=dbus.service
+
+[Service]
+Restart=always
+ExecStart=/usr/bin/onyx-postcode-snoop
+Type=simple
+
+[Install]
+WantedBy=multi-user.target
