@@ -1,0 +1,11 @@
+[Unit]
+Description=ONYX Video & USB Virtual Media Manager
+After=dbus.service
+
+[Service]
+Restart=always
+ExecStart=/usr/bin/onyx-vmedia-manager
+Type=simple
+
+[Install]
+WantedBy=multi-user.target
