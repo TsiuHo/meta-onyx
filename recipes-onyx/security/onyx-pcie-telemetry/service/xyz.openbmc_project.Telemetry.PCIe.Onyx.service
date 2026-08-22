@@ -1,0 +1,11 @@
+[Unit]
+Description=ONYX MCTP over PCIe VDM High-Speed Telemetry
+After=network.target
+
+[Service]
+ExecStart=/usr/bin/onyx-pcie-telemetry
+Restart=always
+Type=simple
+
+[Install]
+WantedBy=multi-user.target
