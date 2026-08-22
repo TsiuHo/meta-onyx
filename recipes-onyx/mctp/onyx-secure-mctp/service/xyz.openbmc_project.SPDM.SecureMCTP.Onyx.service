@@ -1,0 +1,11 @@
+[Unit]
+Description=ONYX Secure MCTP (SPDM Secure Session)
+After=network.target
+
+[Service]
+ExecStart=/usr/bin/onyx-secure-mctp
+Restart=always
+Type=simple
+
+[Install]
+WantedBy=multi-user.target
