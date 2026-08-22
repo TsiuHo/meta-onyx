@@ -1,0 +1,11 @@
+[Unit]
+Description=ONYX SPDM Authentication for GPU/DPU
+After=network.target
+
+[Service]
+ExecStart=/usr/bin/onyx-spdm-auth
+Restart=always
+Type=simple
+
+[Install]
+WantedBy=multi-user.target
