@@ -1,0 +1,11 @@
+[Unit]
+Description=ONYX PLDM Type 5 Seamless FW Update
+After=network.target
+
+[Service]
+ExecStart=/usr/bin/onyx-pldm-update
+Restart=always
+Type=simple
+
+[Install]
+WantedBy=multi-user.target
