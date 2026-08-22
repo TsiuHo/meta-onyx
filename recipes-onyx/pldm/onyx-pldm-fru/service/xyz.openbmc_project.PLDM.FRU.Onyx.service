@@ -1,0 +1,11 @@
+[Unit]
+Description=ONYX PLDM Type 4 HGX Baseboard FRU Data
+After=network.target
+
+[Service]
+ExecStart=/usr/bin/onyx-pldm-fru
+Restart=always
+Type=simple
+
+[Install]
+WantedBy=multi-user.target
