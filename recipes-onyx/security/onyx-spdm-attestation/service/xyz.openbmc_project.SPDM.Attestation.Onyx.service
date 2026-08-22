@@ -1,0 +1,11 @@
+[Unit]
+Description=ONYX SPDM Attestation & Measurement
+After=network.target
+
+[Service]
+ExecStart=/usr/bin/onyx-spdm-attestation
+Restart=always
+Type=simple
+
+[Install]
+WantedBy=multi-user.target
