@@ -1,0 +1,11 @@
+[Unit]
+Description=ONYX PLDM Type 2 GPU/NVSwitch Thermal & Power
+After=network.target
+
+[Service]
+ExecStart=/usr/bin/onyx-pldm-thermal
+Restart=always
+Type=simple
+
+[Install]
+WantedBy=multi-user.target
