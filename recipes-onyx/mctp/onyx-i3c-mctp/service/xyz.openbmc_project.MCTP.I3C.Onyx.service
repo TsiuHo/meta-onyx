@@ -1,0 +1,11 @@
+[Unit]
+Description=ONYX MCTP over I3C Dynamic Address Assignment
+After=network.target
+
+[Service]
+ExecStart=/usr/bin/onyx-i3c-mctp
+Restart=always
+Type=simple
+
+[Install]
+WantedBy=multi-user.target
